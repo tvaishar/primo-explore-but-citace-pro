@@ -1,5 +1,10 @@
 /* citace-pro.css begin */
 
+/*hiding the original citation*/
+prm-citation > div
+	{
+		display:none;
+	}
 .citace-pro
 	{
 		color:green;
@@ -7,4 +12,5 @@
 		margin-top:3em;
 	}
 	
+
 /* citace-pro.css end */

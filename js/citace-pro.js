@@ -3,7 +3,7 @@
 *
 */
 
-app.component('prm-citation', {
+app.component('prmCitationAfter', {
 		bindings: { },
         template: `<div class="citace-pro"><span>Zde bude iframe citace PRO.</span></div>`
  });
