@@ -5,12 +5,14 @@
 
 app.controller ('prmCitationAfterController', ['angularLoad', function (angularLoad) {
 	
-	var cont = this;
+	var vm = this;
 	
-	cont.citacelink = '';
+	vm.citacelink = '';
 	
-	cont.author=cont.parentCtlr.item.pnx.addata.au[0];
-	cont.title=cont.parentCtlr.item.pnx.addata.btitle[0];
+	vm.author=vm.parentCtrl.item.pnx.addata.au[0];
+	vm.title=vm.parentCtrl.item.pnx.addata.btitle[0];
+	
+	console.log(vm.author,vm.title);
 
 
 }]);
@@ -28,3 +30,4 @@ app.component('prmCitationAfter', {
 		</div>`
  });
 
+/* Citace PRO end */
