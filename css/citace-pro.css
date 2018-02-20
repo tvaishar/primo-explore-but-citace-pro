@@ -5,12 +5,16 @@ prm-citation > div
 	{
 		display:none;
 	}
-.citace-pro
+/*.citace-pro
 	{
 		color:green;
 		font-weight:bold;
 		margin-top:3em;
-	}
-	
-
+	}*/
+.citace-pro iframe
+	{
+		width:100%;
+		border:none;
+		border-top:1px solid lightgrey;
+	}	
 /* citace-pro.css end */
