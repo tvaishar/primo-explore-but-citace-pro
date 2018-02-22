@@ -1,7 +1,7 @@
 # primo-explore-but-citace-pro
 _Citace PRO_ service integration
 
-##Description
+## Description
 This solution replaces standard Primo bib. citation solution with [_Citace PRO_](https://www.citace.com/) service. This service is integrated via `<iframe>` element.
 
 New solution is bound to `<prm-citation-after>`, while the original solution is hidden by css. Data from parent controller
@@ -13,8 +13,8 @@ The `<iframe>` is sanitized with [AngularJS SCE](https://docs.angularjs.org/api/
 
 Npm package available from https://www.npmjs.com/package/primo-explore-but-citace-pro. 
 
-##Versions
+## Versions
 
-###1.2.0
+### 1.2.0
 Working solution, that has passed tests on various record samples from Brno University of Technology catalog. 
 However, specifying the crucial `genre` parameter from the data is a bit messy.
