@@ -16,34 +16,52 @@ app.controller ('prmCitationAfterController', ['angularLoad','$sce', function (a
     vm.bibData.citacepro_display = 'bibliography';
     vm.bibData.sid = '420BUT:PRIMO';
 	
-	/* existence of individual bib data arrays in pnx must be tested, hence the ifs */
-  /* data from pnx->addata */
+	/* existence of individual bib data arrays in pnx must be tested, hence the ifs (even though some elements should be definitely defined) */
+	/* data from pnx->addata */
+	/* genre first. In specific cases from pnx.addata.ristype, otherwise from pnx.addata.genre */
+	switch(vm.parentCtrl.item.pnx.addata.ristype[0]){
+	case 'MAP':
+		vm.bibData.genre=vm.parentCtrl.item.pnx.addata.ristype[0].toLowerCase();
+		break;
+	case 'THES':
+		vm.bibData.genre='thesis';
+		break;
+	default:
+		if (typeof vm.parentCtrl.item.pnx.addata.genre !== 'undefined') {vm.bibData.genre = vm.parentCtrl.item.pnx.addata.genre[0];}
+	}
+	/* test of valid values in genre, if the value is invalid, lets try to find the value from other sources */
+	function isInArray(value, array) {
+			return array.indexOf(value) > -1;
+			}
+	if (!isInArray(vm.bibData.genre,['journal','article','book','bookitem','conference','proceeding','thesis','map','misc']))
+		{
+		vm.bibData.genre='misc'; /* safe value first */
+		if (typeof vm.parentCtrl.item.pnx.addata.atitle !== 'undefined') {vm.bibData.genre='article';}	
+		}
+  
+  /* authors first, author arrays can actually have more then one element */
+  vm.bibData.authors='';
+  if (typeof vm.parentCtrl.item.pnx.addata.aucorp !== 'undefined') {vm.bibData.authors = vm.parentCtrl.item.pnx.addata.aucorp.join(';');} /*corporations first, will be eventually overwritten by human authors, but i expect aucorp and au to be mutually exclusive*/
   if (typeof vm.parentCtrl.item.pnx.addata.au !== 'undefined' || typeof vm.parentCtrl.item.pnx.addata.addau !== 'undefined') 
 		{
-			vm.bibData.authors='';
-			if (typeof vm.parentCtrl.item.pnx.addata.au !== 'undefined') {vm.bibData.authors = vm.parentCtrl.item.pnx.addata.au.join('; ');}
-			if (vm.bibData.authors && typeof vm.parentCtrl.item.pnx.addata.addau !== 'undefined') {vm.bibData.authors+="; ";}
-			if (typeof vm.parentCtrl.item.pnx.addata.addau !== 'undefined') {vm.bibData.authors += vm.parentCtrl.item.pnx.addata.addau.join('; ');}
+			if (typeof vm.parentCtrl.item.pnx.addata.au !== 'undefined') {vm.bibData.authors = vm.parentCtrl.item.pnx.addata.au.join(';');}
+			if (vm.bibData.authors && typeof vm.parentCtrl.item.pnx.addata.addau !== 'undefined') {vm.bibData.authors+=";";}
+			if (typeof vm.parentCtrl.item.pnx.addata.addau !== 'undefined') {vm.bibData.authors += vm.parentCtrl.item.pnx.addata.addau.join(';');}
 		}	
   
-  /* genre dependent assignments */
-  if (typeof vm.parentCtrl.item.pnx.addata.genre !== 'undefined') {vm.bibData.genre = vm.parentCtrl.item.pnx.addata.genre[0];}
   
-  switch(vm.bibData.genre) {
-    case 'book':
-			if (typeof vm.parentCtrl.item.pnx.addata.btitle !== 'undefined') {vm.bibData.title = vm.parentCtrl.item.pnx.addata.btitle[0];}
-        break;
-    case 'article':
-			if (typeof vm.parentCtrl.item.pnx.addata.jtitle !== 'undefined') {vm.bibData.title = vm.parentCtrl.item.pnx.addata.jtitle[0];}
-			if (typeof vm.parentCtrl.item.pnx.addata.atitle !== 'undefined') {vm.bibData.atitle = vm.parentCtrl.item.pnx.addata.atitle[0];}
-        break;
+  if (typeof vm.parentCtrl.item.pnx.addata.btitle !== 'undefined') {vm.bibData.title = vm.parentCtrl.item.pnx.addata.btitle[0];}
+  if (typeof vm.parentCtrl.item.pnx.addata.jtitle !== 'undefined') {vm.bibData.title = vm.parentCtrl.item.pnx.addata.jtitle[0];} /* i expect jtitle and btitle to be mutually exclusive */
+  if (typeof vm.parentCtrl.item.pnx.addata.atitle !== 'undefined') {vm.bibData.atitle = vm.parentCtrl.item.pnx.addata.atitle[0];}
+	
     
-    } 
-  /* universal assignments */
+     
+  
   if (typeof vm.parentCtrl.item.pnx.addata.date !== 'undefined') {vm.bibData.date = vm.parentCtrl.item.pnx.addata.date[0];}
+  if (typeof vm.parentCtrl.item.pnx.addata.eisbn !== 'undefined') {vm.bibData.eisbn = vm.parentCtrl.item.pnx.addata.eisbn[0];} 
   if (typeof vm.parentCtrl.item.pnx.addata.isbn !== 'undefined') {vm.bibData.isbn = vm.parentCtrl.item.pnx.addata.isbn[0];}
-  if (typeof vm.parentCtrl.item.pnx.addata.eissn !== 'undefined') {vm.bibData.issn = vm.parentCtrl.item.pnx.addata.eissn[0];} 
-  if (typeof vm.parentCtrl.item.pnx.addata.issn !== 'undefined') {vm.bibData.issn = vm.parentCtrl.item.pnx.addata.issn[0];} /*print issn rewrites e-issn*/
+  if (typeof vm.parentCtrl.item.pnx.addata.eissn !== 'undefined') {vm.bibData.eissn = vm.parentCtrl.item.pnx.addata.eissn[0];} 
+  if (typeof vm.parentCtrl.item.pnx.addata.issn !== 'undefined') {vm.bibData.issn = vm.parentCtrl.item.pnx.addata.issn[0];} 
   if (typeof vm.parentCtrl.item.pnx.addata.pub !== 'undefined') {vm.bibData.publisher = vm.parentCtrl.item.pnx.addata.pub[0];}
   if (typeof vm.parentCtrl.item.pnx.addata.cop !== 'undefined') {vm.bibData.place = vm.parentCtrl.item.pnx.addata.cop[0];}
   if (typeof vm.parentCtrl.item.pnx.addata.volume !== 'undefined') {vm.bibData.volume = vm.parentCtrl.item.pnx.addata.volume[0];}
@@ -51,6 +69,7 @@ app.controller ('prmCitationAfterController', ['angularLoad','$sce', function (a
   if (typeof vm.parentCtrl.item.pnx.addata.spage !== 'undefined') {vm.bibData.spage = vm.parentCtrl.item.pnx.addata.spage[0];}
   if (typeof vm.parentCtrl.item.pnx.addata.epage !== 'undefined') {vm.bibData.epage = vm.parentCtrl.item.pnx.addata.epage[0];}
   if (typeof vm.parentCtrl.item.pnx.addata.doi !== 'undefined') {vm.bibData.doi = vm.parentCtrl.item.pnx.addata.doi[0];}
+  if (typeof vm.parentCtrl.item.pnx.addata.url !== 'undefined') {vm.bibData.url = vm.parentCtrl.item.pnx.addata.url[0];}
   /* data from pnx->display */
   if (typeof vm.parentCtrl.item.pnx.display.edition !== 'undefined') {vm.bibData.edition = vm.parentCtrl.item.pnx.display.edition[0];}
   if (typeof vm.parentCtrl.item.pnx.display.format !== 'undefined') {vm.bibData.pages  = vm.parentCtrl.item.pnx.display.format[0];}
